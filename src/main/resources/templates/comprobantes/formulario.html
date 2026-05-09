@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Nuevo Comprobante</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+</head>
+<body>
+
+<nav th:replace="~{layout/base :: navbar}"></nav>
+
+<div class="container mt-4" style="max-width:700px">
+
+    <h2>Nuevo comprobante</h2>
+
+    <!-- Errores globales -->
+    <div th:if="${errores}" class="alert alert-danger">
+        <ul class="mb-0">
+            <li th:each="e : ${errores}" th:text="${e}"></li>
+        </ul>
+    </div>
+
+    <form th:action="@{/comprobantes/guardar}" method="post">
+
+        <!-- Tipo -->
+        <div class="mb-3">
+            <label class="form-label">Tipo *</label>
+            <select name="type" class="form-select">
+                <option value="">-- Seleccionar --</option>
+                <option value="BOLETA">Boleta</option>
+                <option value="FACTURA">Factura</option>
+            </select>
+        </div>
+
+        <!-- Fecha -->
+        <div class="mb-3">
+            <label class="form-label">Fecha *</label>
+            <input type="date" name="date" class="form-control">
+        </div>
+
+        <!-- Cliente -->
+        <div class="mb-3">
+            <label class="form-label">Cliente *</label>
+            <select name="customerId" class="form-select">
+                <option value="">-- Seleccionar cliente --</option>
+                <option th:each="c : ${clientes}"
+                        th:value="${c.id}"
+                        th:text="${c.name} + ' - ' + ${c.documentType} + ': ' + ${c.document}">
+                </option>
+            </select>
+        </div>
+
+        <!-- Productos y cantidades -->
+        <h5>Productos y cantidades</h5>
+        <table class="table table-bordered">
+            <thead class="table-dark">
+            <tr>
+                <th>Producto</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Cantidad</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="p : ${productos}">
+                <td th:text="${p.name}"></td>
+                <td th:text="${p.price}"></td>
+                <td th:text="${p.stock}"></td>
+                <td>
+                    <input type="hidden" name="productIds" th:value="${p.id}">
+                    <input type="number" name="quantities"
+                           value="0" min="0" class="form-control"
+                           style="width:80px">
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Emitir comprobante</button>
+            <a th:href="@{/comprobantes}" class="btn btn-secondary">Cancelar</a>
+        </div>
+
+    </form>
+</div>
+
+</body>
+</html>
